@@ -1,0 +1,10 @@
+Hien thi bang hang xom:
+	show ip ospf neighbor
+Hien thi thong tin trong database OSPF
+	show ip ospf database
+Cau hinh
+# router ospf [process-id] 1-65535
+network [a.b.c.d] [wildcard mask] area [0-65535]
+router ospf 100
+network 10.1.12.0 0.0.0.255 area 0
+network 10.1.23.0 0.0.0.255 area 1

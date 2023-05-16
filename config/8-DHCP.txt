@@ -1,0 +1,28 @@
+DHCP:
+- Là giao thức cấp địa chỉ IP động từ máy chủ đến các máy tính
+- DHCP server: cấp các tham số cho client bao gồm:
+	+ địa chỉ IP 
+	+ subnet mask
+	+ default gateway
+	+ dns
+- Tất cả các tham số này được server cấp cho client bằng hình thức cho thuê
+- Các bước hoạt động:
+	B1: Khi bật máy tính, nó sẽ gửi bản tin DHCP discovery (để tìm kiếm DHCP
+server trên mạng), gửi dưới dạng bản tin broadcast
+	B2: Sau khi DHCP nhận được, nó sẽ gửi bản tin offer (mục đích để xác nhận)
+	B3: Sau khi client nhận được bản tin DHCP offer, client gửi tới DHCP server
+bản tin request
+	B4: DHCP server gửi bản tin DHCP ACK
+	Sau 4 bước thì client sẽ nhận được địa chỉ ip được nói ở trên
+
+-Các phương án để cấp địa chỉ IP như sau:
+	1. Sử dụng DHCP server
+	2. Sử dụng router, sw L3
+-Các bước cấu hình DHCP server trên SW L3:	
++ B1: tạo pool:
+sw(config)# ip dhcp pool vlan 10
+sw(config-dhcp)# network 10.1.10.0 255.255.255.0
+sw(config-dhcp)# default-router 10.1.10.1
+sw(config-dhcp)# dns-server 8.8.8.8
+
+Trên VPC > ip dhcp

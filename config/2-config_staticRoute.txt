@@ -1,0 +1,58 @@
+R1
+inter e0/0 
+ip add 192.168.21.1 255.255.255.0 
+no shu 
+
+inter e0/1
+ip add 192.168.12.1 255.255.255.0
+no shu
+
+inter e0/2
+ip add 192.168.1.1 255.255.255.0
+no shu
+
+show ip inter bri
+
+//static route
+
+ip route 192.168.2.0 255.255.255.0 192.168.21.2 5 
+
+ip route 192.168.2.0 255.255.255.0 192.168.12.2 10 
+
+do show ip route sta
+
+R2
+inter e0/0 
+ip add 192.168.21.2 255.255.255.0 
+no shu 
+ 
+inter e0/1 
+ip add 192.168.12.2 255.255.255.0 
+no shu 
+
+inter e0/2 
+ip add 192.168.2.1 255.255.255.0 
+no shu 
+
+show ip inter bri
+
+//static route
+
+ip route 192.168.1.0 255.255.255.0 192.168.12.1 5
+
+ip route 192.168.1.0 255.255.255.0 192.168.21.1 10
+
+do show ip route sta
+
+
+PC1
+
+ip 192.168.1.10/24 192.168.1.1
+
+trace 192.168.2.10
+
+PC2 
+
+ip 192.168.2.10/24 192.168.2.1
+
+trace 192.168.1.10

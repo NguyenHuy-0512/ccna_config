@@ -1,0 +1,39 @@
+Cau hinh vlan
+Buoc 1: tao vlan va dat ten
+sw(config)# vlan 10
+sw(config-vlan)# name IT
+sw(config)# vlan 20
+sw(config-vlan)# name HR
+
+Buoc 2: gan port vao vlan: mac dinh tat ca cac port deu thuoc vlan1
+sw(config)#int e0/0
+sw(config-int)# switchport mode access
+sw(config-int)# switchport access vlan 10
+
+sw(config)#int e0/1
+sw(config-int)# switchport mode access
+sw(config-int)# switchport access vlan 20
+
+sw(config)#int e0/2
+sw(config-int)# switchport mode access
+sw(config-int)# switchport access vlan 10
+
+sw(config)#int e0/3
+sw(config-int)# switchport mode access
+sw(config-int)# switchport access vlan 20
+
+Kiem tra cau hinh vlan:	
+	show vlan brief
+
+Cau hinh Trunking:
+sw(config-if)#switchport trunk encapsulation dot1q
+sw(config-if)#switchport mode trunk
+
+Kiem tra cau hinh trunk:
+	show interface trunk 
+Cho phep tung VLAN di qua:
+sw(config)#int e0/0
+sw(config-if)#switchport trunk allowed vlan 10,20 
+sw(config-if)#switchport trunk allowed vlan 10-20
+	them vlan nua:
+ sw(config-if)#switchport trunk allowed vlan add 30

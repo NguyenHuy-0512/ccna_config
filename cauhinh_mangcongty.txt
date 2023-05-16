@@ -1,0 +1,286 @@
+Xóa cấu hình Policy cũ
+
+ASA#conf t
+ASA(config)#no service-policy global_policy global
+ASA(config)#no policy-map global_policy
+ASA(config)#no policy-map type inspect dns preset_dns_map
+ASA(config)#no class-map inspection_default
+Cấu hình Policy mới
+
+ASA(config)#class-map inspection_default
+ASA(config-cmap)#match default-inspection-traffic
+ASA(config-cmap)#exit
+ASA(config)#policy-map global_policy
+ASA(config-pmap)#class inspection_default
+ASA(config-pmap-c)#inspect icmp
+ASA(config-pmap-c)#inspect dns
+ASA(config-pmap-c)#inspect http
+ASA(config-pmap-c)#exit
+ASA(config)#service-policy global_policy global
+ASA(config)#
+
+
+--------------------------------------------------------------------------------------------------------------
+=================================================================================================================
+
+1. cau hinh switch layer-2 (switch 2960)
+
+Switch>en 
+Switch#conf t
+Switch(config)#hostname SW_btl_1stF
+SW_btl_1stF(config)#vlan 10
+SW_btl_1stF(config-vlan)#name HANHCHINH
+SW_btl_1stF(config-vlan)#ex
+SW_btl_1stF(config)#vlan 20
+SW_btl_1stF(config-vlan)#name NHANSU
+SW_btl_1stF(config-vlan)#ex
+SW_btl_1stF(config)#vlan 30
+SW_btl_1stF(config-vlan)#name KEHOACH
+SW_btl_1stF(config-vlan)#ex
+SW_btl_1stF(config)#ex
+SW_btl_1stF#
+
+
+2 Gan cong cho tung vlan
+
+SW_btl_1stF(config)#int Fa0/1
+SW_btl_1stF(config-if)#switchport mode access
+SW_btl_1stF(config-if)#switchport access vlan 10
+SW_btl_1stF(config-if)#ex
+SW_btl_1stF(config)#int Fa0/2
+SW_btl_1stF(config-if)#switchport mode access
+SW_btl_1stF(config-if)#
+
+SW_btl_1stF(config-if)#ex
+SW_btl_1stF(config)#int Fa0/3
+SW_btl_1stF(config-if)#switchport mode access
+SW_btl_1stF(config-if)#switchport access vlan 30
+SW_btl_1stF(config-if)#ex
+SW_btl_1stF(config)#
+
+3. Tao mode trunk cho SW_btl_1stF
+
+ SW_btl_1stF(config)#int Fa0/24
+SW_btl_1stF(config-if)#switchport mode trunk
+SW_btl_1stF(config-if)#ex
+
+===================================================================================================================
+
+4.Cau hinh con switch_2960 tang 4
+
+Switch#conf t
+Switch(config)#hostname SW_btl_4thF
+SW_btl_4thF(config)#vlan 40
+SW_btl_4thF(config-vlan)#name PHONGHOP
+SW_btl_4thF(config-vlan)#ex
+
+SW_btl_4thF(config)#int Fa0/4
+SW_btl_4thF(config-if)#switchport mode access
+SW_btl_4thF(config-if)#switchport access vlan 40
+SW_btl_4thF(config-if)#ex
+
+SW_btl_4thF(config)#int Fa0/24
+SW_btl_4thF(config-if)#switchport mode trunk
+
+===========================================================================================================================
+								cau hinh switch(3560)
+
+5.tao cac vlan
+
+
+Switch>en
+Switch#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+Switch(config)#hostname SW-Layer3
+SW-Layer3(config)#vlan 10
+SW-Layer3(config-vlan)#name HANHCHINH
+SW-Layer3(config-vlan)#ex
+SW-Layer3(config)#vlan 20
+SW-Layer3(config-vlan)#name NHANSU
+SW-Layer3(config-vlan)#ex
+SW-Layer3(config)#vlan 30
+SW-Layer3(config-vlan)#name KEHOACH
+SW-Layer3(config-vlan)#ex
+SW-Layer3(config)#vlan 40
+SW-Layer3(config-vlan)#name PHONGHOP
+SW-Layer3(config-vlan)#ex
+SW-Layer3(config)#
+
+6.gan cong dinh tuyen ASA firewall -vung inside
+
+SW-Layer3(config)#int Gig0/1
+SW-Layer3(config-if)#description To ASA Firewall
+SW-Layer3(config-if)#no switchport
+SW-Layer3(config-if)#ip add 172.16.0.2 255.255.255.252
+SW-Layer3(config-if)#ex
+SW-Layer3(config)#
+
+
+7.tao mode trunk cho 4 tang
+
+SW-Layer3(config)#int Fa0/1
+SW-Layer3(config-if)#switchport trunk encapsulation dot1q
+SW-Layer3(config-if)#switchport mode trunk
+SW-Layer3(config-if)#ex
+
+SW-Layer3(config)#int Fa0/2
+SW-Layer3(config-if)#switchport trunk encapsulation dot1q
+SW-Layer3(config-if)#switchport mode trunk
+SW-Layer3(config-if)#ex
+
+SW-Layer3(config)#int Fa0/3
+SW-Layer3(config-if)#switchport trunk encapsulation dot1q
+SW-Layer3(config-if)#switchport mode trunk
+SW-Layer3(config-if)#ex
+
+SW-Layer3(config)#int Fa0/4
+SW-Layer3(config-if)#switchport trunk encapsulation dot1q
+SW-Layer3(config-if)#switchport mode trunk
+SW-Layer3(config-if)#ex
+SW-Layer3(config)#
+
+8.cau hinh dia chi cho switch
+
+SW-Layer3(config)#int vlan 10
+SW-Layer3(config-if)#	
+SW-Layer3(config-if)#ip add 192.168.10.1 255.255.255.0
+SW-Layer3(config-if)#no shut
+SW-Layer3(config-if)#ex
+
+SW-Layer3(config)#int vlan 20
+SW-Layer3(config-if)#
+SW-Layer3(config-if)#ip add 192.168.20.1 255.255.255.0
+SW-Layer3(config-if)#no sh
+SW-Layer3(config-if)#ex
+
+SW-Layer3(config)#int vlan 30
+SW-Layer3(config-if)#
+SW-Layer3(config-if)#ip add 192.168.30.1 255.255.255.0
+SW-Layer3(config-if)#no sh
+SW-Layer3(config-if)#ex
+
+SW-Layer3(config)#int vlan 40
+SW-Layer3(config-if)#
+SW-Layer3(config-if)#ip add 192.168.40.1 255.255.255.0
+SW-Layer3(config-if)#no sh
+SW-Layer3(config-if)#ex
+SW-Layer3(config)#
+
+ cau hinh dinh tuyen mac dinh ASA firewall
+
+
+
+
+=========================================================================================================
+						Cau hinh ASA tuong lua
+9.cau hinh cac cong Gig
+
+ciscoasa(config)#hostname ASA
+
+ASA(config)#int Gig1/1
+ASA(config-if)#nameif inside
+ASA(config-if)#security-level 100
+ASA(config-if)#ip add 172.168.0.1 255.255.255.252
+ASA(config-if)#no sh
+ASA(config-if)#ex
+
+ASA(config)#int Gig1/2
+ASA(config-if)#ex
+int
+ASA(config-if)#security-level 50
+ASA(config-if)#ip add 192.168.4.1 255.255.255.0
+ASA(config-if)#no sh
+ASA(config-if)#ex
+
+ASA(config)#int Gig1/3
+ASA(config-if)#nameif outside
+ASA(config-if)#security-level 0
+ASA(config-if)#ip add 10.10.10.1 255.255.255.0
+ASA(config-if)#no sh
+ASA(config-if)#ex
+ASA(config)#
+
+10.cau hinh ip route cho cac cong
+
+ASA#
+ASA#conf t
+ASA(config)#route outside 0.0.0.0 0.0.0.0 10.10.10.2
+ASA(config)#route inside 192.168.10.0 255.255.255.0 172.16.0.2
+ASA(config)#route inside 192.168.20.0 255.255.255.0 172.16.0.2
+ASA(config)#route inside 192.168.30.0 255.255.255.0 172.16.0.2
+ASA(config)#route inside 192.168.40.0 255.255.255.0 172 16.0.2
+
+11. Nat dia chi
+
+ASA#
+ASA#conf t
+ASA(config)#object network DMZ1OUT
+ASA(config-network-object)#subnet 192.168.4.0 255.255.255.0
+ASA(config-network-object)#nat (dmz,outside) dynamic interface
+ASA(config-network-object)#ex
+ASA#conf t
+
+ASA#
+ASA#conf t
+ASA(config)#object network IN2DMZ
+ASA(config-network-object)#subnet 172.16.2.0 255.255.255.252
+ASA(config-network-object)#nat (inside,dmz) dynamic interface
+ASA(config-network-object)#ex
+
+
+12.
+ ASA#conf t
+ASA(config)#object network WEB_SERVER
+ASA(config-network-object)#host 192.168.4.3	
+ASA(config-network-object)#nat (dmz,outside) static 10.10.10.3
+ASA(config-network-object)#ex
+ASA(config)#access-list OUTSIDE-DMZ extended permit tcp any host 192.168.4.3 eq www
+ASA(config)#access-group OUTSIDE-DMZ in interface outside
+
+
+====================================================================================================
+								Router 2911
+
+13.config cac dia chi cong
+
+interface GigabitEthernet0/0
+ ip address 10.10.10.2 255.255.255.0
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/1
+ ip address 8.8.8.1 255.255.255.0
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/2
+ ip address 12.34.56.1 255.255.255.0
+ duplex auto
+ speed auto
+
+
+ip route 0.0.0.0 0.0.0.0 10.10.10.1
+
+
+Config sw
+	int f0/1
+	switchport access vlan 10
+ 	switchport mode trunk
+
+	int g0/1
+	switchport mode trunk
+
+
+Config router:
+	int g0/1.10
+	encapsulation dot1Q 10
+	ip address 192.168.20.1 255.255.255.0
+
+	int g0/1.20
+	encapsulation dot1Q 20
+	ip address 192.168.30.1 255.255.255.0
+
+	
+	int g0/1.30
+	encapsulation dot1Q 30
+	ip address 192.168.40.1 255.255.255.0

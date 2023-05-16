@@ -1,0 +1,18 @@
+R1
+router eigrp 100
+network 10.1.12.0 0.0.0.255
+no auto-summary
+
+R2 
+router eigrp 100
+network 10.1.12.0 0.0.0.255
+network 10.1.23.0 0.0.0.255
+no auto-summary
+
+R3
+router eigrp 100
+network 10.1.23.0 0.0.0.255
+no auto-summary
+
+show ip eigrp neighbors
+shop ip eigrp topology

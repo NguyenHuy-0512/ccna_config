@@ -1,0 +1,70 @@
+-user mode: 
+	show
+-mode dac quyen: 
+	show, 
+	luu xoa file cau hinh , khoi dong lai he thong
+	ko cau hinh dc cac giao thuc dinh tuyen
+-global mode:
+	luu truc tiep tren ram va co tac dung ngay lap tuc
+
+-interface mode:
+	dat ip cho router, tat bat cong tren router
+
++ky hieu
+	user mode: router>enable
+				
+	mode dac quyen: router# config t
+
+	global mode: router(config)#interface e0/0
+
+	inferface mode: router(config-if)#
+
+
+VD:
+--global
+Router(config)#hostname (Router)
+
+--global dat password
+Router(config)#line console 0
+Router(config)#password (eve)
+Router(config)#login
+
+Router(config)#enable password (pass)
+Router(config)#enable secret (pass)
+
+Router(config)#service password-encryption
+--mode dacquyen
+luu file cau hinh ram -> nvram: wr
+load lai: reload
+
+-- xem
+Router#show run
+Router(config)#do show run
+Router#show ip interface brief (xem host)
+
+
+--interface mode:
+Router(config-if)#ip address (ipaddress) (subnetmask)
+
+
+
+TELNET: TCP port 23
+	điều kiện bật telnet
+		enable password
+		pc connect router
+		mở phiên 
+Máy chủ
+	Router(config)#line vty 0 4
+	Router(config)#transport input all
+	Router(config-line)#password (pw)
+	Router(config-line)#login
+	Router(config-line)#exit
+
+Máy điều khiển
+	Router>telnet (ipaddress)
+
+SSH: TCP port 22
+
+
+Xoa het cau hinh 1 cong interface e0/0 
+	SWR(config)#default interface e0/0

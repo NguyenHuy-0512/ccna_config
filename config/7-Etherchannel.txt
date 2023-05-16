@@ -1,0 +1,100 @@
+*Link aggregation: 
+	- là thực hiện gom các đường link vật lý kết nối các sw thành 1 đường link logic để
+đảm bảo tăng băng thông và tính dự phòng.
+	- Link kết nối giữa các sw lúc này là Etherchannel
+	- Interface trên cổng logic người ta gọi là Interface port channel
+	Khi cấu hình trunking trên port channel thì nó cũng tự cấu hình trên cổng vật lý
+*Điều kiện để thực hiện gom:
+	- Các cổng vật lý phải trên cùng 1 sw
+	- Các port phải cùng tốc độ
+	- Các port phải cùng môi trường
+	- Các port phải cùng dublex mode: full dublex, half dublex
+	- Các port phải trên cùng vlan
+* Trên 1 sw có thể gom được tối đa 8 port vật lý trong 1 group port channel và có thể
+tạo tối đa 16 group
+Các giao thức dùng để gom:
+1. LACP (Link aggregation control protocol) 
+Đây là chuẩn chung.
+Gồm các mode:
+	Active là mode chủ động gửi các bản tin đàm phán
+	Passive là mode bị động (tức là đầu kia phải active)
+	Để đường link là etherchannel thì 1 đầu phải là active, 1 đầu là passive hoặc cả 2 
+	đều là active 
+2. PACP (Port aggregation control protocol)  
+Đây là giao thức chuẩn của cisco và chỉ chạy trên các thiết bị cisco.
+Gồm các mode:
+	Disrable: mode chủ động
+	Auto: mode bị động
+	Để đường link là etherchannel thì 1 đầu phải là disrable, 1 đầu là auto.
+	On: 2 đầu bật thủ công, ko tự động trao đổi thiết lập
+
+
+Cách cấu hình:
+1. LACP:
+B1: Định nghĩa các port vật lý vào trong group
+Trên sw1
+sw1(config)# int range e0/0-1
+sw1(config-if-range)# switchport trunk encapsulation dot1q
+sw1(config-if-range)# switchport mode trunk
+sw1(config-if-range)# channel-group 1 mode active
+sw1(config-if-range)# exit
+sw1(config)# interface port-channel 1
+sw1(config-if-range)# switchport trunk encapsulation dot1q
+sw1(config-if-range)# switchport mode trunk
+
+Trên sw2
+sw2(config)# int range e0/0-1
+sw2(config-if-range)# switchport trunk encapsulation dot1q
+sw2(config-if-range)# switchport mode trunk
+sw1(config-if-range)# channel-group 1 mode passive
+sw1(config-if-range)# exit
+sw1(config)# interface port-channel 1
+sw1(config-if-range)# switchport trunk encapsulation dot1q
+sw1(config-if-range)# switchport mode trunk
+
+sw1# show etherchannel summary
+--------------------------------
+Định tuyến VLAN
+Để thực hiện định tuyến giữa các VLAN :
++ Thực hiện kết nối router với sw
++ Thiết lập đường trunk
+
+Trên router sẽ thực hiện tạo interface logic(sub interface)
+Mỗi 1 sub interface sẽ có 1 địa chỉ ip tương ứng chính là deauft geteway của mỗi vlan
+
+Các bước cấu hình:
+B1: SW L2 tạo vlan và gắn port vào vlan tương ứng đồng thời kết hợp đường trunk từ router:
+SW(config)#vlan10
+SW(config-vlan)#name IT
+SW(config)#int e0/0
+SW(config-int)# switchport mode access
+SW(config-int)# switchport access vlan 10
+
+SW(config)#vlan20
+SW(config-vlan)#name HR
+SW(config)#int e0/1
+SW(config-int)# switchport mode access
+SW(config-int)# switchport access vlan 20
+
+SW(config)#int e0/2
+sw(config-if)#switchport trunk encapsulation dot1q
+sw(config-if)#switchport mode trunk
+
+B2: Trên router:
+Tạo các sub-int tương ứng
+(Tạo các sub-int và đặt địa chỉ ip tương ứng)
+Lưu ý: không đặt ip trên cổng vật lý R1, R2 .....
+R(config)#int e0/0
+R(config-int)# no shut
+R(config-int)# exit
+
+R(config)# int e0/0.10
+R(config-if)# encapsulation dot1q 10
+R(config-if)# ip address 10.1.10.1 255.255.255.0
+
+R(config)# int e0/0.20
+R(config-if)# encapsulation dot1q 20
+R(config-if)# ip address 10.1.20.1 255.255.255.0
+
+
+
